@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Music</string>
+    <string name="action_settings">Settings</string>
+    <string name="tip_no_Music">没有找到音乐文件，请添加音乐文件</string>
+    <string name="tip_reach_top">已经到达列表顶端，现在播放最后一曲</string>
+    <string name="tip_reach_bottom">已经到达列表底端，现在播放第一曲</string>
+    <string name="open">00:00</string>
+    <string name="end">00:00</string>
+    <string name="about">版本：1.0\n简介：这是一个简单的音乐播放器</string>
+    
+</resources>
