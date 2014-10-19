@@ -1,10 +1,8 @@
 package com.example.music;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import android.view.KeyEvent;
 import com.example.data.Music;
 import com.example.data.MusicList;
 
@@ -75,6 +73,8 @@ public class MainMusic extends Activity {
  	private StatusChangedReceiver receiver;
     //歌曲列表对象
     private ArrayList<Music> musicArrayList;
+    //退出判断标记
+    private static Boolean isExit = false;
  	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -438,6 +438,42 @@ public class MainMusic extends Activity {
     	break;
     	}
     	sendBroadcast(intent);
+    }
+
+    private void exitByDoubleClick()
+    {
+        Timer timer = null;
+        if(isExit == false)
+        {
+            isExit = true;
+            Toast.makeText(this, "再按一次退出！", Toast.LENGTH_SHORT).show();
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    isExit = false;
+                }
+            }, 2000);
+        }
+        else
+        {
+            System.exit(0);
+        }
+
+
+    }
+
+    //重写onKeyDown方法
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        switch (keyCode)
+        {
+            case KeyEvent.KEYCODE_BACK:
+                exitByDoubleClick();
+                break;
+        }
+        return false;
     }
     
     private void setTheme(String theme) {
