@@ -2,6 +2,7 @@ package com.example.music;
 
 import java.util.*;
 
+import android.media.AudioManager;
 import android.view.KeyEvent;
 import com.example.data.Music;
 import com.example.data.MusicList;
@@ -75,6 +76,9 @@ public class MainMusic extends Activity {
     private ArrayList<Music> musicArrayList;
     //退出判断标记
     private static Boolean isExit = false;
+    //音量控制
+    private TextView vol;
+    private SeekBar seekBar_vol;
  	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,6 +115,8 @@ public class MainMusic extends Activity {
     	text_Current=(TextView) findViewById(R.id.opentime);
     	text_Duration=(TextView) findViewById(R.id.endtime);
     	root_Layout = (RelativeLayout) findViewById(R.id.relativeLayout);
+        vol = (TextView) findViewById(R.id.main_volumeText);
+        seekBar_vol = (SeekBar) findViewById(R.id.main_volumebar);
     }
     
     //为每个组件注册监听器
@@ -288,7 +294,7 @@ public class MainMusic extends Activity {
 		String theme = property.getTheme();
 		// 设置Activity的主题
 		setTheme(theme);
-    		
+    	audio_control();
     }
 	@Override
     protected void onDestroy(){
@@ -467,13 +473,61 @@ public class MainMusic extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)
     {
+        int progress;
         switch (keyCode)
         {
             case KeyEvent.KEYCODE_BACK:
                 exitByDoubleClick();
                 break;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                progress = seekBar_vol.getProgress();
+                if(progress !=0)
+                    seekBar_vol.setProgress(progress-1);
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                progress = seekBar_vol.getProgress();
+                if(progress != seekBar_vol.getMax());
+                seekBar_vol.setProgress(progress+1);
+                return true;
+            default:
+                break;
         }
         return false;
+    }
+
+    //控制音量
+    private void audio_control()
+    {
+        //获取音量管理器
+        final AudioManager audioManager = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
+        //设置当前调节音量大小只是针对媒体音乐
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        //设置滑动条最大值
+        final int max_progress = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        seekBar_vol.setMax(max_progress);
+        //获取当前音量
+        int progress = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        seekBar_vol.setProgress(progress);
+        vol.setText("音量："+(progress*100/max_progress)+"%");
+        seekBar_vol.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                vol.setText("音量："+(i*100/max_progress)+"%");
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,i,AudioManager.FLAG_PLAY_SOUND);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+
     }
     
     private void setTheme(String theme) {

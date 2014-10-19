@@ -4,15 +4,54 @@
 	android:layout_height="fill_parent" android:background="@drawable/bg_sky"
 	android:id="@+id/relativeLayout">
 
+<LinearLayout
+        android:id="@+id/main_volumeLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+    </LinearLayout>
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginRight="5dip">
+        <TextView
+                android:id="@+id/main_volumeText"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="音量：100%"
+                android:textColor="#ffffffff"
+                android:textSize="15dp"
+                android:layout_marginRight="5dip"/>
+        <SeekBar
+                android:id="@+id/main_volumebar"
+                android:layout_width="82dp"
+                android:layout_height="wrap_content"
+                android:maxHeight="5dip"
+                android:minHeight="5dip"
+                android:progressDrawable="@drawable/seekbar_style"
+                android:thumb="@drawable/seekbar_thumb"
+               />
+    </LinearLayout>
+        </LinearLayout>
     <ListView
         android:id="@+id/Musiclist"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/linearLayout1"
-        android:layout_marginTop="5dip"
+        android:layout_below="@id/main_volumeLayout"
+        android:fastScrollEnabled="true"
         android:layout_marginBottom="5dip"
 		android:layout_marginLeft="5dip" android:layout_marginRight="5dip"
-        android:layout_alignParentTop="true"
         android:background="@drawable/widget_bg" 
         android:cacheColorHint="#00000000">
     </ListView>
@@ -60,7 +99,11 @@
     </LinearLayout>
     <SeekBar android:id="@+id/seekbar"
             android:layout_height="wrap_content"
-            android:layout_width="fill_parent" />
+            android:layout_width="fill_parent"
+            android:maxHeight="5dip"
+            android:minHeight="5dip"
+            android:progressDrawable="@drawable/seekbar_style"
+            android:thumb="@drawable/seekbar_thumb"/>
     <RelativeLayout 
              android:id="@+id/relativelayout1"
              android:layout_width="fill_parent"
