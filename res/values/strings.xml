@@ -17,5 +17,6 @@
     <string name="about2">关于</string>
     <string name="quit">退出</string>
     <string name="quit_message">确定退出？</string>
+    <string name="sleep">睡眠设置</string>
 
 </resources>

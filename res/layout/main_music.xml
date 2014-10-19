@@ -114,6 +114,14 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:text="@string/open"/>
+        <ImageView
+                android:id="@+id/main_sleep"
+                android:layout_toRightOf="@id/opentime"
+                android:layout_marginLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/sleep_timer"
+                android:background="@drawable/sleep_timer"/>
         <TextView 
             android:id="@+id/endtime"
             android:layout_width="wrap_content"

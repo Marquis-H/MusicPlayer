@@ -1,9 +1,11 @@
 package com.example.music;
 
+import java.sql.Time;
 import java.util.*;
 
 import android.media.AudioManager;
 import android.view.KeyEvent;
+import android.widget.*;
 import com.example.data.Music;
 import com.example.data.MusicList;
 
@@ -27,16 +29,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.SimpleAdapter;
 
 public class MainMusic extends Activity {
     private ImageButton Btn_Previous;
@@ -79,6 +73,15 @@ public class MainMusic extends Activity {
     //音量控制
     private TextView vol;
     private SeekBar seekBar_vol;
+    //睡眠模式相关组件，标示常量
+    private ImageView iv_sleep;
+    private Timer timer_sleep;
+    private static final boolean NOTSLEEP = false;
+    private static final boolean ISSLEEP = true;
+    //默认的睡眠时间为20
+    private int sleeptime = 20;
+    //标示是否打开睡眠模式
+    private static boolean sleepmode;
  	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +98,8 @@ public class MainMusic extends Activity {
         status = MusicService.COMMAND_STOP;
         //默认播放模式是顺序模式
         playmode = MainMusic.MODE_LIST_SEQUENCE;
+        //默认睡眠模式为关闭状态
+        sleepmode = MainMusic.NOTSLEEP;
     }
     
    //绑定广播接收器
@@ -117,6 +122,7 @@ public class MainMusic extends Activity {
     	root_Layout = (RelativeLayout) findViewById(R.id.relativeLayout);
         vol = (TextView) findViewById(R.id.main_volumeText);
         seekBar_vol = (SeekBar) findViewById(R.id.main_volumebar);
+        iv_sleep = (ImageView)findViewById(R.id.main_sleep);
     }
     
     //为每个组件注册监听器
@@ -295,6 +301,9 @@ public class MainMusic extends Activity {
 		// 设置Activity的主题
 		setTheme(theme);
     	audio_control();
+        //睡眠模式打开时显示图标，关闭时隐藏图标
+        if(sleepmode == MainMusic.ISSLEEP) iv_sleep.setVisibility(View.VISIBLE);
+        else iv_sleep.setVisibility(View.INVISIBLE);
     }
 	@Override
     protected void onDestroy(){
@@ -458,6 +467,7 @@ public class MainMusic extends Activity {
                 @Override
                 public void run() {
                     isExit = false;
+                    finish();
                 }
             }, 2000);
         }
@@ -526,7 +536,95 @@ public class MainMusic extends Activity {
 
             }
         });
+    }
 
+    //获取到该布局上的组件对象
+    private void showSleepDialog()
+    {
+        //先用getLayoutInflater().inflate方法获取sleep.xml布局组件，并初始化View
+        final View userview = this.getLayoutInflater().inflate(R.layout.sleep,null);
+        //通过View类的findViewById方法获取到组件对象
+        final TextView sleep_text = (TextView)userview.findViewById(R.id.sleep_text);
+        final Switch sleep_switch = (Switch)userview.findViewById(R.id.sleep_switch);
+        final SeekBar sleep_seekbar = (SeekBar)userview.findViewById(R.id.sleep_seekbar);
+
+        sleep_text.setText("睡眠于："+sleeptime+"分钟后");
+        //根据当前的睡眠状态来确定Switch的状态
+        if(sleepmode == MainMusic.ISSLEEP) sleep_switch.setChecked(true);
+        sleep_seekbar.setMax(60);
+        sleep_seekbar.setProgress(sleeptime);
+        sleep_seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                sleeptime = i;
+                sleep_text.setText("睡眠于："+sleeptime+"分钟后");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        sleep_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                sleepmode = b;
+            }
+        });
+        //定义定时器任务
+        final TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                System.exit(0);
+            }
+        };
+        //定义对话框以及初始化
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("选择睡眠时间（0~60分钟）");
+        //设置布局
+        dialog.setView(userview);
+        //设置取消按钮响应事件
+        dialog.setNegativeButton("取消",new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface arg0,int arg1){
+                arg0.dismiss();
+            }
+        });
+        //设置重置按钮响应时间
+        dialog.setNegativeButton("重置",new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface arg0,int arg1){
+                sleepmode = MainMusic.NOTSLEEP;
+                sleeptime = 20;
+                timerTask.cancel();
+                iv_sleep.setVisibility(View.INVISIBLE);
+            }
+        });
+        //设置确定按钮响应事件
+        dialog.setPositiveButton("确定",new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface arg0,int arg1){
+                if(sleepmode == MainMusic.ISSLEEP)
+                {
+                    timer_sleep = new Timer();
+                    int time = sleep_seekbar.getProgress();
+                    //启动任务
+                    timer_sleep.schedule(timerTask,time*60*1000);
+                    iv_sleep.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    //取消任务
+                    timerTask.cancel();
+                    timer_sleep.cancel();
+                    arg0.dismiss();
+                    iv_sleep.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+        dialog.show();
 
     }
     
@@ -630,6 +728,9 @@ public class MainMusic extends Activity {
                             }
                         });
                 builder.create().show();
+                break;
+            case R.id.menu_sleep:
+                showSleepDialog();
                 break;
         }
 		return super.onOptionsItemSelected(item);

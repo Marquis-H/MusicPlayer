@@ -13,6 +13,11 @@
             android:showAsAction="never"
             android:title="@string/playmode"/>
     <item
+            android:id="@+id/menu_sleep"
+            android:orderInCategory="100"
+            android:showAsAction="never"
+            android:title="@string/sleep"/>
+    <item
             android:id="@+id/menu_about"
             android:orderInCategory="100"
             android:showAsAction="never"
