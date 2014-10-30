@@ -15,6 +15,15 @@
         android:icon="@drawable/ic_launcher_music"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <receiver android:name="com.example.widget.WidgetProviderClass"
+                   android:label="@string/app_name" >
+                   <intent-filter>
+                       <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                       <action android:name="MusicService.ACTION_UPDATE" />
+                    </intent-filter>
+        <meta-data android:name="android.appwidget.provider"
+                    android:resource="@xml/widget_provider"/>
+        </receiver>
         <activity android:name="com.example.music.LrcActivity"></activity>
         <activity
             android:name="com.example.music.MainMusic"

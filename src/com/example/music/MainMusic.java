@@ -482,7 +482,10 @@ public class MainMusic extends Activity {
         }
         else
         {
-            System.exit(0);
+           // System.exit(0);
+            Intent intent = new Intent(MainMusic.this,MusicService.class);
+            stopService(intent);
+            finish();
         }
 
 
@@ -589,7 +592,10 @@ public class MainMusic extends Activity {
         final TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                System.exit(0);
+               // System.exit(0);
+                Intent intent = new Intent(MainMusic.this,MusicService.class);
+                stopService(intent);
+                finish();
             }
         };
         //定义对话框以及初始化
@@ -689,7 +695,10 @@ public class MainMusic extends Activity {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
                         // TODO Auto-generated method stub
-                        System.exit(0);
+                        //System.exit(0);
+                        Intent intent = new Intent(MainMusic.this,MusicService.class);
+                        stopService(intent);
+                        finish();
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
 
