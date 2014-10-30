@@ -41,48 +41,48 @@ public class MainMusic extends Activity {
     private TextView text_Current;
     private TextView text_Duration;
     private SeekBar seekBar;
-    //¸üĞÂ½ø¶ÈÌõ
+    //æ›´æ–°è¿›åº¦æ¡
     private Handler seekBarHandler;
-    //µ±ÆÚ¸èÇúµÄ³ÖĞøÊ±¼äºÍµ±Ç°Î»ÖÃ
+    //å½“æœŸæ­Œæ›²çš„æŒç»­æ—¶é—´å’Œå½“å‰ä½ç½®
     private int duration;
     private int time;
     private String musicName;
     private String musicArtist;
     private RelativeLayout root_Layout;
-    //½ø¶ÈÌõ¿ØÖÆ³£Á¿
+    //è¿›åº¦æ¡æ§åˆ¶å¸¸é‡
     private static final int PROGRESS_INCREASE=0;
     private static final int PROGRESS_PAUSE=1;
     private static final int PROGRESS_RESET=2;
-    //²¥·ÅÄ£Ê½³£Á¿
+    //æ’­æ”¾æ¨¡å¼å¸¸é‡
     private static final int MODE_LIST_SEQUENCE=0;
     private static final int MODE_SINGLE_CYCLE=1;
     private static final int MODE_LIST_CYCLE=2;
     private int playmode;
-    // µ±Ç°¸èÇúµÄĞòºÅ£¬ÏÂ±ê´Ó1¿ªÊ¼
- 	private int number;
-    // Menu³£Á¿
- 	public static final int MENU_THEME = Menu.FIRST;
- 	public static final int MENU_ABOUT = Menu.FIRST + 1;
- 	 
- 	//¹ã²¥½ÓÊÕÆ÷
- 	private StatusChangedReceiver receiver;
-    //¸èÇúÁĞ±í¶ÔÏó
+    // å½“å‰æ­Œæ›²çš„åºå·ï¼Œä¸‹æ ‡ä»1å¼€å§‹
+    private int number;
+    // Menuå¸¸é‡
+    public static final int MENU_THEME = Menu.FIRST;
+    public static final int MENU_ABOUT = Menu.FIRST + 1;
+
+    //å¹¿æ’­æ¥æ”¶å™¨
+    private StatusChangedReceiver receiver;
+    //æ­Œæ›²åˆ—è¡¨å¯¹è±¡
     private ArrayList<Music> musicArrayList;
-    //ÍË³öÅĞ¶Ï±ê¼Ç
+    //é€€å‡ºåˆ¤æ–­æ ‡è®°
     private static Boolean isExit = false;
-    //ÒôÁ¿¿ØÖÆ
+    //éŸ³é‡æ§åˆ¶
     private TextView vol;
     private SeekBar seekBar_vol;
-    //Ë¯ÃßÄ£Ê½Ïà¹Ø×é¼ş£¬±êÊ¾³£Á¿
+    //ç¡çœ æ¨¡å¼ç›¸å…³ç»„ä»¶ï¼Œæ ‡ç¤ºå¸¸é‡
     private ImageView iv_sleep;
     private Timer timer_sleep;
     private static final boolean NOTSLEEP = false;
     private static final boolean ISSLEEP = true;
-    //Ä¬ÈÏµÄË¯ÃßÊ±¼äÎª20
+    //é»˜è®¤çš„ç¡çœ æ—¶é—´ä¸º20
     private int sleeptime = 20;
-    //±êÊ¾ÊÇ·ñ´ò¿ªË¯ÃßÄ£Ê½
+    //æ ‡ç¤ºæ˜¯å¦æ‰“å¼€ç¡çœ æ¨¡å¼
     private static boolean sleepmode;
- 	@Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_music);
@@ -96,45 +96,45 @@ public class MainMusic extends Activity {
         sendBroadcastOnCommand(MusicService.COMMAND_CHECK_IS_PLAYING);
         initSeekBarHandler();
         status = MusicService.COMMAND_STOP;
-        //Ä¬ÈÏ²¥·ÅÄ£Ê½ÊÇË³ĞòÄ£Ê½
+        //é»˜è®¤æ’­æ”¾æ¨¡å¼æ˜¯é¡ºåºæ¨¡å¼
         playmode = MainMusic.MODE_LIST_SEQUENCE;
-        //Ä¬ÈÏË¯ÃßÄ£Ê½Îª¹Ø±Õ×´Ì¬
+        //é»˜è®¤ç¡çœ æ¨¡å¼ä¸ºå…³é—­çŠ¶æ€
         sleepmode = MainMusic.NOTSLEEP;
     }
-    
-   //°ó¶¨¹ã²¥½ÓÊÕÆ÷
+
+    //ç»‘å®šå¹¿æ’­æ¥æ”¶å™¨
     private void bindStatusChangedReceiver(){
-    	receiver = new StatusChangedReceiver();
-    	IntentFilter filter = new IntentFilter(MusicService.BROADCAST_MUSICSERVICE_UPDATE_STATUS);
-    	registerReceiver(receiver, filter);
+        receiver = new StatusChangedReceiver();
+        IntentFilter filter = new IntentFilter(MusicService.BROADCAST_MUSICSERVICE_UPDATE_STATUS);
+        registerReceiver(receiver, filter);
     }
-    
-   //»ñÈ¡ÏÔÊ¾×é¼ş×¢²áµÄid
+
+    //è·å–æ˜¾ç¤ºç»„ä»¶æ³¨å†Œçš„id
     private void findView(){
-    	Btn_Previous = (ImageButton) findViewById(R.id.previous);
-    	Btn_PlayOrPause = (ImageButton) findViewById(R.id.play);
-    	Btn_Stop = (ImageButton) findViewById(R.id.stop);
-    	Btn_Next = (ImageButton) findViewById(R.id.next);
-    	musiclist = (ListView) findViewById(R.id.Musiclist);
-    	seekBar= (SeekBar) findViewById(R.id.seekbar);
-    	text_Current=(TextView) findViewById(R.id.opentime);
-    	text_Duration=(TextView) findViewById(R.id.endtime);
-    	root_Layout = (RelativeLayout) findViewById(R.id.relativeLayout);
+        Btn_Previous = (ImageButton) findViewById(R.id.previous);
+        Btn_PlayOrPause = (ImageButton) findViewById(R.id.play);
+        Btn_Stop = (ImageButton) findViewById(R.id.stop);
+        Btn_Next = (ImageButton) findViewById(R.id.next);
+        musiclist = (ListView) findViewById(R.id.Musiclist);
+        seekBar= (SeekBar) findViewById(R.id.seekbar);
+        text_Current=(TextView) findViewById(R.id.opentime);
+        text_Duration=(TextView) findViewById(R.id.endtime);
+        root_Layout = (RelativeLayout) findViewById(R.id.relativeLayout);
         vol = (TextView) findViewById(R.id.main_volumeText);
         seekBar_vol = (SeekBar) findViewById(R.id.main_volumebar);
         iv_sleep = (ImageView)findViewById(R.id.main_sleep);
     }
-    
-    //ÎªÃ¿¸ö×é¼ş×¢²á¼àÌıÆ÷
+
+    //ä¸ºæ¯ä¸ªç»„ä»¶æ³¨å†Œç›‘å¬å™¨
     private void registerListeners(){
-    	//ÉÏÒ»Ê×
-    	Btn_Previous.setOnClickListener(new OnClickListener() {
+        //ä¸Šä¸€é¦–
+        Btn_Previous.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
                 sendBroadcastOnCommand(MusicService.COMMAND_PREVIOUS);
             }
         });
-    	//²¥·Å&ÔİÍ£
-    	Btn_PlayOrPause.setOnClickListener(new OnClickListener() {
+        //æ’­æ”¾&æš‚åœ
+        Btn_PlayOrPause.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
                 if (isPlaying()) {
                     sendBroadcastOnCommand(MusicService.COMMAND_PAUSE);
@@ -145,33 +145,33 @@ public class MainMusic extends Activity {
                 }
             }
         });
-    	//Í£Ö¹
-    	Btn_Stop.setOnClickListener(new OnClickListener() {
+        //åœæ­¢
+        Btn_Stop.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
                 sendBroadcastOnCommand(MusicService.COMMAND_STOP);
             }
         });
-    	//ÏÂÒ»Ê×
-    	Btn_Next.setOnClickListener(new OnClickListener() {
+        //ä¸‹ä¸€é¦–
+        Btn_Next.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
                 sendBroadcastOnCommand(MusicService.COMMAND_NEXT);
             }
         });
-    	musiclist.setOnItemClickListener(new OnItemClickListener() {
+        musiclist.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // positionÏÂ±ê´Ó0¿ªÊ¼£¬numberÏÂ±ê´Ó1¿ªÊ¼
+                // positionä¸‹æ ‡ä»0å¼€å§‹ï¼Œnumberä¸‹æ ‡ä»1å¼€å§‹
                 number = position;
                 sendBroadcastOnCommand(MusicService.COMMAND_PLAY);
             }
         });
-    	seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+        seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                //·¢¹ã²¥¸ømusicservice£¬Ö´ĞĞÒôÀÖÌø×ª
-                sendBroadcastOnCommand(MusicService.COMMAND_SEEK_TO);
-                if (isPlaying()) {
-                    //½ø¶ÈÌõ»Ö¸´ÒÆ¶¯
+                //å‘å¹¿æ’­ç»™musicserviceï¼Œæ‰§è¡ŒéŸ³ä¹è·³è½¬
+
+                if (status == MusicService.STATUS_PLAYING) {
+                    //è¿›åº¦æ¡æ¢å¤ç§»åŠ¨
                     sendBroadcastOnCommand(MusicService.COMMAND_SEEK_TO);
                     seekBarHandler.sendEmptyMessageDelayed(PROGRESS_INCREASE, 1000);
                 }
@@ -184,154 +184,163 @@ public class MainMusic extends Activity {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (status != MusicService.STATUS_STOPPED) {
                 time = progress;
                 text_Current.setText(formatTime(time));
+                }
             }
         });
     }
 
-	
-	 //musicservice²¥·Å×´Ì¬ÅĞ¶Ï
+
+    //musicserviceæ’­æ”¾çŠ¶æ€åˆ¤æ–­
     private int status;
-    
-    //ÊÇ·ñÕıÔÚ²¥·ÅÒôÀÖ
+
+    //æ˜¯å¦æ­£åœ¨æ’­æ”¾éŸ³ä¹
     private boolean isPlaying(){
-    	return status == MusicService.STATUS_PLAYING;
+        return status == MusicService.STATUS_PLAYING;
     }
-    
-    //ÊÇ·ñÔİÍ£²¥·ÅÒôÀÖ
+
+    //æ˜¯å¦æš‚åœæ’­æ”¾éŸ³ä¹
     private boolean isPaused(){
-    	return status == MusicService.STATUS_PAUSED;
+        return status == MusicService.STATUS_PAUSED;
     }
-    
-    //ÊÇ·ñÍ£Ö¹²¥·ÅÒôÀÖ
+
+    //æ˜¯å¦åœæ­¢æ’­æ”¾éŸ³ä¹
     private boolean isStop(){
-    	return status == MusicService.STATUS_STOPPED;
+        return status == MusicService.STATUS_STOPPED;
     }
-    
-	//musicservice²¥·ÅÆ÷×´Ì¬¸üĞÂ½ÓÊÕ¹ã²¥
-	class StatusChangedReceiver extends BroadcastReceiver{
-		public void onReceive(Context context,Intent intent){
-			//»ñÈ¡musicservice²¥·ÅÆ÷×´Ì¬
-			status = intent.getIntExtra("status", -1);
-			if(status==MusicService.STATUS_PLAYING){
-				time=intent.getIntExtra("time",0);
+
+    //musicserviceæ’­æ”¾å™¨çŠ¶æ€æ›´æ–°æ¥æ”¶å¹¿æ’­
+    class StatusChangedReceiver extends BroadcastReceiver{
+        public void onReceive(Context context,Intent intent){
+            //è·å–musicserviceæ’­æ”¾å™¨çŠ¶æ€
+            status = intent.getIntExtra("status", -1);
+            if(status==MusicService.STATUS_PLAYING){
+                time=intent.getIntExtra("time",0);
                 musicName = intent.getStringExtra("musicName");
                 musicArtist = intent.getStringExtra("musicArtist");
-				duration =intent.getIntExtra("duration",0);
+                duration =intent.getIntExtra("duration",0);
                 number = intent.getIntExtra("number", number);
-				 Log.e( "HelloBroadReciever", "+"+duration);
-				
-			}
-			updateUI(status);
-		}
-	}
-	
-	//¸üĞÂUI
-	private void updateUI(int status){
-		switch (status){
-		case MusicService.STATUS_PLAYING:
-			seekBarHandler.removeMessages(PROGRESS_INCREASE);
-			seekBarHandler.sendEmptyMessageDelayed(PROGRESS_INCREASE, 1000);
-			seekBar.setMax(duration);
-			seekBar.setProgress(time);
-			text_Duration.setText(formatTime(duration));
-			Btn_PlayOrPause.setBackgroundResource(R.drawable.pause);
-            musiclist.setSelection(number);
+                //Log.e( "HelloBroadReciever", "+"+time);
 
-			MainMusic.this.setTitle("ÕıÔÚ²¥·Å£º" + musicName + " - "+musicArtist);
-			break;
-		case MusicService.STATUS_PAUSED:
-			seekBarHandler.sendEmptyMessage(PROGRESS_PAUSE);
-            String string = MainMusic.this.getTitle().toString().replace("ÕıÔÚ²¥·Å:", "ÒÑÔİÍ£:");
-            MainMusic.this.setTitle(string);
-			Btn_PlayOrPause.setBackgroundResource(R.drawable.play);
-			break;
-		case MusicService.STATUS_STOPPED:
-            time = 0;
-            duration = 0;
-            text_Current.setText(formatTime(time));
-            text_Duration.setText(formatTime(duration));
-			seekBarHandler.sendEmptyMessage(PROGRESS_RESET);
-            MainMusic.this.setTitle("Music");
-			Btn_PlayOrPause.setBackgroundResource(R.drawable.play);
-			break;
-		case MusicService.STATUS_COMPLETED:
-            if(playmode == MainMusic.MODE_LIST_SEQUENCE)
-            {
-                if(number == MusicList.getMusicList().size()-1)
-                {
-                    sendBroadcastOnCommand(MusicService.STATUS_STOPPED);
-                }
-                else
-                {
-                    sendBroadcastOnCommand(MusicService.COMMAND_NEXT);
-                }
             }
-            else if(playmode == MainMusic.MODE_SINGLE_CYCLE)
-                sendBroadcastOnCommand(MusicService.COMMAND_PLAY);
+            if(status==MusicService.STATUS_COMPLETED){
+                number = intent.getIntExtra("number", 0);
+            }
+            updateUI(status);
+        }
+    }
 
-            else if(playmode == MainMusic.MODE_LIST_CYCLE)
-            {
-                if(number ==musicArrayList.size()-1)
+    //æ›´æ–°UI
+    private void updateUI(int status){
+        switch (status){
+            case MusicService.STATUS_PLAYING:
+                seekBarHandler.removeMessages(PROGRESS_INCREASE);
+                musiclist.setSelection(number);
+                seekBar.setProgress(time);
+                seekBar.setMax(duration);
+                Log.e( "HelloBroadReciever", "+"+time);
+
+                seekBarHandler.sendEmptyMessageDelayed(PROGRESS_INCREASE, 1000);
+                text_Duration.setText(formatTime(duration));
+                Btn_PlayOrPause.setBackgroundResource(R.drawable.pause);
+
+
+                MainMusic.this.setTitle("æ­£åœ¨æ’­æ”¾ï¼š" + musicName + " - "+musicArtist);
+                break;
+            case MusicService.STATUS_PAUSED:
+                seekBarHandler.sendEmptyMessage(PROGRESS_PAUSE);
+                String string = MainMusic.this.getTitle().toString().replace("æ­£åœ¨æ’­æ”¾ï¼š", "å·²æš‚åœï¼š");
+                Log.e( "HelloBroadReciever", "+"+string);
+                MainMusic.this.setTitle(string);
+                Btn_PlayOrPause.setBackgroundResource(R.drawable.play);
+                break;
+            case MusicService.STATUS_STOPPED:
+                time = 0;
+                duration = 0;
+                text_Current.setText(formatTime(time));
+                text_Duration.setText(formatTime(duration));
+                seekBarHandler.sendEmptyMessage(PROGRESS_RESET);
+                MainMusic.this.setTitle("Music");
+                Btn_PlayOrPause.setBackgroundResource(R.drawable.play);
+                break;
+            case MusicService.STATUS_COMPLETED:
+                if(playmode == MainMusic.MODE_LIST_SEQUENCE)
                 {
-                    number = 0;
+                    if(number == MusicList.getMusicList().size()-1)
+                    {
+                        sendBroadcastOnCommand(MusicService.STATUS_STOPPED);
+                    }
+                    else
+                    {
+                        sendBroadcastOnCommand(MusicService.COMMAND_NEXT);
+                    }
+                }
+                else if(playmode == MainMusic.MODE_SINGLE_CYCLE)
                     sendBroadcastOnCommand(MusicService.COMMAND_PLAY);
-                }
-                else
-                {
-                    sendBroadcastOnCommand(MusicService.COMMAND_NEXT);
-                }
-            }
 
-			seekBarHandler.sendEmptyMessage(PROGRESS_RESET);
-            MainMusic.this.setTitle("Music");
-			Btn_PlayOrPause.setBackgroundResource(R.drawable.play);
-			break;
-		default:
-			break;
-		}
-	}
-	@Override
+                else if(playmode == MainMusic.MODE_LIST_CYCLE)
+                {
+                    if(number ==musicArrayList.size()-1)
+                    {
+                        number = 0;
+                        sendBroadcastOnCommand(MusicService.COMMAND_PLAY);
+                    }
+                    else
+                    {
+                        sendBroadcastOnCommand(MusicService.COMMAND_NEXT);
+                    }
+                }
+
+                seekBarHandler.sendEmptyMessage(PROGRESS_RESET);
+                MainMusic.this.setTitle("Music");
+                Btn_PlayOrPause.setBackgroundResource(R.drawable.play);
+                break;
+            default:
+                break;
+        }
+    }
+    @Override
     protected void onResume(){
-    	super.onResume();
+        super.onResume();
         sendBroadcastOnCommand(MusicService.COMMAND_CHECK_IS_PLAYING);
-		PropertyBean property = new PropertyBean(MainMusic.this);
-		String theme = property.getTheme();
-		// ÉèÖÃActivityµÄÖ÷Ìâ
-		setTheme(theme);
-    	audio_control();
-        //Ë¯ÃßÄ£Ê½´ò¿ªÊ±ÏÔÊ¾Í¼±ê£¬¹Ø±ÕÊ±Òş²ØÍ¼±ê
+        PropertyBean property = new PropertyBean(MainMusic.this);
+        String theme = property.getTheme();
+        // è®¾ç½®Activityçš„ä¸»é¢˜
+        setTheme(theme);
+        audio_control();
+        //ç¡çœ æ¨¡å¼æ‰“å¼€æ—¶æ˜¾ç¤ºå›¾æ ‡ï¼Œå…³é—­æ—¶éšè—å›¾æ ‡
         if(sleepmode == MainMusic.ISSLEEP) iv_sleep.setVisibility(View.VISIBLE);
         else iv_sleep.setVisibility(View.INVISIBLE);
     }
-	@Override
+    @Override
     protected void onDestroy(){
-    	if(isStop()){
-    		stopService(new Intent(this,MusicService.class));
-    	}
-    	super.onDestroy();
+        if(isStop()){
+            stopService(new Intent(this,MusicService.class));
+        }
+        super.onDestroy();
     }
-    
-    //³õÊ¼»¯²¥·ÅÁĞ±í
+
+    //åˆå§‹åŒ–æ’­æ”¾åˆ—è¡¨
     private void initMusicList(){
         musicArrayList = MusicList.getMusicList();
-        //±ÜÃâÖØ¸´Ìí¼ÓÒôÀÖ
+        //é¿å…é‡å¤æ·»åŠ éŸ³ä¹
         if(musicArrayList.isEmpty())
         {
             Cursor mMusicCursor = this.getContentResolver().query(
                     MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, null, null,
                     MediaStore.Audio.AudioColumns.TITLE);
-            //±êÌâ
+            //æ ‡é¢˜
             int indexTitle = mMusicCursor.getColumnIndex(MediaStore.Audio.AudioColumns.TITLE);
-            //ÒÕÊõ¼Ò
+            //è‰ºæœ¯å®¶
             int indexArtist = mMusicCursor.getColumnIndex(MediaStore.Audio.AudioColumns.ARTIST);
-            //×ÜÊ±³¤
+            //æ€»æ—¶é•¿
             int indexTotalTime = mMusicCursor.getColumnIndex(MediaStore.Audio.AudioColumns.DURATION);
-            //Â·¾¶
+            //è·¯å¾„
             int indexPath = mMusicCursor.getColumnIndex(MediaStore.Audio.AudioColumns.DATA);
 
-            /**Í¨¹ımMusicCursorÓÎ±ê±éÀúÊı¾İ¿â£¬²¢½«MusicÀà¶ÔÏó¼ÓÔØ´øArrayListÖĞ*/
+            /**é€šè¿‡mMusicCursoræ¸¸æ ‡éå†æ•°æ®åº“ï¼Œå¹¶å°†Musicç±»å¯¹è±¡åŠ è½½å¸¦ArrayListä¸­*/
             for (mMusicCursor.moveToFirst(); !mMusicCursor.isAfterLast(); mMusicCursor
                     .moveToNext()) {
                 String strTitle = mMusicCursor.getString(indexTitle);
@@ -340,16 +349,16 @@ public class MainMusic extends Activity {
                 String strPath = mMusicCursor.getString(indexPath);
 
                 if (strArtist.equals("<unknown>"))
-                    strArtist = "ÎŞÒÕÊõ¼Ò";
+                    strArtist = "æ— è‰ºæœ¯å®¶";
                 Music music = new Music(strTitle, strArtist, strPath, strTotoalTime);
                 musicArrayList.add(music);
             }
         }
     }
-    
-    //¸üĞÂÁĞ±íÄÚÈİ
 
-    /**ÉèÖÃÊÊÅäÆ÷²¢³õÊ¼»¯listView*/
+    //æ›´æ–°åˆ—è¡¨å†…å®¹
+
+    /**è®¾ç½®é€‚é…å™¨å¹¶åˆå§‹åŒ–listView*/
     private void initListView() {
         List<Map<String, String>> list_map = new ArrayList<Map<String, String>>();
         HashMap<String, String> map;
@@ -383,76 +392,76 @@ public class MainMusic extends Activity {
             Btn_Next.setEnabled(true);
         }
     }
-    //¸ñÊ½»¯£ººÁÃë ->"mm:ss" 
-	private String formatTime(int msec) {
-		int minute = (msec / 1000) / 60;
-		int second = (msec / 1000) % 60;
-		String minuteString;
-		String secondString;
-		if (minute < 10) {
-			minuteString = "0" + minute;
-		} else {
-			minuteString = "" + minute;
-		}
-		if (second < 10) {
-			secondString = "0" + second;
-		} else {
-			secondString = "" + second;
-		}
-		return minuteString + ":" + secondString;
-	}
-	
-	//¿ØÖÆ½ø¶ÈÌõ
-	private void initSeekBarHandler(){
-		seekBarHandler = new Handler(){
-			public void handleMessage(Message msg){
-				super.handleMessage(msg);
-				switch(msg.what){
-				case PROGRESS_INCREASE:
-					if(seekBar.getProgress()<duration){
-						//½ø¶ÈÌõÇ°½ø1s
-						seekBar.incrementProgressBy(1000);
-						seekBarHandler.sendEmptyMessageDelayed(
-								PROGRESS_INCREASE,1000);
-						//ĞŞ¸ÄÏÔÊ¾½ø¶ÈµÄÊ±¼ä
-						text_Current.setText(formatTime(time));
-						time +=1000;
-					}
-					break;
-				case PROGRESS_PAUSE:
-					seekBarHandler.removeMessages(PROGRESS_INCREASE);
-					break;
-				case PROGRESS_RESET:
-					seekBarHandler.removeMessages(PROGRESS_INCREASE);
-					seekBar.setProgress(0);
-					text_Current.setText("00:00");
-					break;
-				}
-			}
-		};
-	}
+    //æ ¼å¼åŒ–ï¼šæ¯«ç§’ ->"mm:ss" 
+    private String formatTime(int msec) {
+        int minute = (msec / 1000) / 60;
+        int second = (msec / 1000) % 60;
+        String minuteString;
+        String secondString;
+        if (minute < 10) {
+            minuteString = "0" + minute;
+        } else {
+            minuteString = "" + minute;
+        }
+        if (second < 10) {
+            secondString = "0" + second;
+        } else {
+            secondString = "" + second;
+        }
+        return minuteString + ":" + secondString;
+    }
 
-    //·¢ËÍÃüÁî¸ømusicservice¡£¿ØÖÆÒôÀÖ²¥·Å,²ÎÊıÔÚmusicserviceÖĞ
+    //æ§åˆ¶è¿›åº¦æ¡
+    private void initSeekBarHandler(){
+        seekBarHandler = new Handler(){
+            public void handleMessage(Message msg){
+                super.handleMessage(msg);
+                switch(msg.what){
+                    case PROGRESS_INCREASE:
+                        if(seekBar.getProgress()<duration){
+                            //è¿›åº¦æ¡å‰è¿›1s
+                            seekBar.incrementProgressBy(1000);
+                            seekBarHandler.sendEmptyMessageDelayed(
+                                    PROGRESS_INCREASE,1000);
+                            //ä¿®æ”¹æ˜¾ç¤ºè¿›åº¦çš„æ—¶é—´
+                            text_Current.setText(formatTime(time));
+                            time +=1000;
+                        }
+                        break;
+                    case PROGRESS_PAUSE:
+                        seekBarHandler.removeMessages(PROGRESS_INCREASE);
+                        break;
+                    case PROGRESS_RESET:
+                        seekBarHandler.removeMessages(PROGRESS_INCREASE);
+                        seekBar.setProgress(0);
+                        text_Current.setText("00:00");
+                        break;
+                }
+            }
+        };
+    }
+
+    //å‘é€å‘½ä»¤ç»™musicserviceã€‚æ§åˆ¶éŸ³ä¹æ’­æ”¾,å‚æ•°åœ¨musicserviceä¸­
     private void sendBroadcastOnCommand(int command){
-    	Intent intent = new Intent(MusicService.BROADCAST_MUSICSERVICE_CONTROL);
-		intent.putExtra("command", command);
-    	//¸ù¾İÖ¸ÁîµÄ²»Í¬£¬·â×°²»Í¬µÄÊı¾İ
-    	switch(command){
-    	case MusicService.COMMAND_PLAY:
-    		intent.putExtra("number", number);
-    		break;
-    	case MusicService.COMMAND_PREVIOUS:
-    	case MusicService.COMMAND_NEXT:
-    	case MusicService.COMMAND_SEEK_TO:
-    		intent.putExtra("time", time);
-    		break;
-    	case MusicService.COMMAND_PAUSE:
-    	case MusicService.COMMAND_RESUME:
-    	case MusicService.COMMAND_STOP:
-    	default:
-    	break;
-    	}
-    	sendBroadcast(intent);
+        Intent intent = new Intent(MusicService.BROADCAST_MUSICSERVICE_CONTROL);
+        intent.putExtra("command", command);
+        //æ ¹æ®æŒ‡ä»¤çš„ä¸åŒï¼Œå°è£…ä¸åŒçš„æ•°æ®
+        switch(command){
+            case MusicService.COMMAND_PLAY:
+                intent.putExtra("number", number);
+                break;
+            case MusicService.COMMAND_PREVIOUS:
+            case MusicService.COMMAND_NEXT:
+            case MusicService.COMMAND_SEEK_TO:
+                intent.putExtra("time", time);
+                break;
+            case MusicService.COMMAND_PAUSE:
+            case MusicService.COMMAND_RESUME:
+            case MusicService.COMMAND_STOP:
+            default:
+                break;
+        }
+        sendBroadcast(intent);
     }
 
     private void exitByDoubleClick()
@@ -461,7 +470,7 @@ public class MainMusic extends Activity {
         if(isExit == false)
         {
             isExit = true;
-            Toast.makeText(this, "ÔÙ°´Ò»´ÎÍË³ö£¡", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "å†æŒ‰ä¸€æ¬¡é€€å‡ºï¼", Toast.LENGTH_SHORT).show();
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
@@ -479,7 +488,7 @@ public class MainMusic extends Activity {
 
     }
 
-    //ÖØĞ´onKeyDown·½·¨
+    //é‡å†™onKeyDownæ–¹æ³•
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)
     {
@@ -505,24 +514,24 @@ public class MainMusic extends Activity {
         return false;
     }
 
-    //¿ØÖÆÒôÁ¿
+    //æ§åˆ¶éŸ³é‡
     private void audio_control()
     {
-        //»ñÈ¡ÒôÁ¿¹ÜÀíÆ÷
+        //è·å–éŸ³é‡ç®¡ç†å™¨
         final AudioManager audioManager = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
-        //ÉèÖÃµ±Ç°µ÷½ÚÒôÁ¿´óĞ¡Ö»ÊÇÕë¶ÔÃ½ÌåÒôÀÖ
+        //è®¾ç½®å½“å‰è°ƒèŠ‚éŸ³é‡å¤§å°åªæ˜¯é’ˆå¯¹åª’ä½“éŸ³ä¹
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        //ÉèÖÃ»¬¶¯Ìõ×î´óÖµ
+        //è®¾ç½®æ»‘åŠ¨æ¡æœ€å¤§å€¼
         final int max_progress = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         seekBar_vol.setMax(max_progress);
-        //»ñÈ¡µ±Ç°ÒôÁ¿
+        //è·å–å½“å‰éŸ³é‡
         int progress = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         seekBar_vol.setProgress(progress);
-        vol.setText("ÒôÁ¿£º"+(progress*100/max_progress)+"%");
+        vol.setText("éŸ³é‡ï¼š"+(progress*100/max_progress)+"%");
         seekBar_vol.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                vol.setText("ÒôÁ¿£º"+(i*100/max_progress)+"%");
+                vol.setText("éŸ³é‡ï¼š"+(i*100/max_progress)+"%");
                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,i,AudioManager.FLAG_PLAY_SOUND);
             }
 
@@ -538,18 +547,18 @@ public class MainMusic extends Activity {
         });
     }
 
-    //»ñÈ¡µ½¸Ã²¼¾ÖÉÏµÄ×é¼ş¶ÔÏó
+    //è·å–åˆ°è¯¥å¸ƒå±€ä¸Šçš„ç»„ä»¶å¯¹è±¡
     private void showSleepDialog()
     {
-        //ÏÈÓÃgetLayoutInflater().inflate·½·¨»ñÈ¡sleep.xml²¼¾Ö×é¼ş£¬²¢³õÊ¼»¯View
+        //å…ˆç”¨getLayoutInflater().inflateæ–¹æ³•è·å–sleep.xmlå¸ƒå±€ç»„ä»¶ï¼Œå¹¶åˆå§‹åŒ–View
         final View userview = this.getLayoutInflater().inflate(R.layout.sleep,null);
-        //Í¨¹ıViewÀàµÄfindViewById·½·¨»ñÈ¡µ½×é¼ş¶ÔÏó
+        //é€šè¿‡Viewç±»çš„findViewByIdæ–¹æ³•è·å–åˆ°ç»„ä»¶å¯¹è±¡
         final TextView sleep_text = (TextView)userview.findViewById(R.id.sleep_text);
         final Switch sleep_switch = (Switch)userview.findViewById(R.id.sleep_switch);
         final SeekBar sleep_seekbar = (SeekBar)userview.findViewById(R.id.sleep_seekbar);
 
-        sleep_text.setText("Ë¯ÃßÓÚ£º"+sleeptime+"·ÖÖÓºó");
-        //¸ù¾İµ±Ç°µÄË¯Ãß×´Ì¬À´È·¶¨SwitchµÄ×´Ì¬
+        sleep_text.setText("ç¡çœ äºï¼š"+sleeptime+"åˆ†é’Ÿå");
+        //æ ¹æ®å½“å‰çš„ç¡çœ çŠ¶æ€æ¥ç¡®å®šSwitchçš„çŠ¶æ€
         if(sleepmode == MainMusic.ISSLEEP) sleep_switch.setChecked(true);
         sleep_seekbar.setMax(60);
         sleep_seekbar.setProgress(sleeptime);
@@ -557,7 +566,7 @@ public class MainMusic extends Activity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 sleeptime = i;
-                sleep_text.setText("Ë¯ÃßÓÚ£º"+sleeptime+"·ÖÖÓºó");
+                sleep_text.setText("ç¡çœ äºï¼š"+sleeptime+"åˆ†é’Ÿå");
             }
 
             @Override
@@ -576,26 +585,26 @@ public class MainMusic extends Activity {
                 sleepmode = b;
             }
         });
-        //¶¨Òå¶¨Ê±Æ÷ÈÎÎñ
+        //å®šä¹‰å®šæ—¶å™¨ä»»åŠ¡
         final TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
                 System.exit(0);
             }
         };
-        //¶¨Òå¶Ô»°¿òÒÔ¼°³õÊ¼»¯
+        //å®šä¹‰å¯¹è¯æ¡†ä»¥åŠåˆå§‹åŒ–
         final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Ñ¡ÔñË¯ÃßÊ±¼ä£¨0~60·ÖÖÓ£©");
-        //ÉèÖÃ²¼¾Ö
+        dialog.setTitle("é€‰æ‹©ç¡çœ æ—¶é—´ï¼ˆ0~60åˆ†é’Ÿï¼‰");
+        //è®¾ç½®å¸ƒå±€
         dialog.setView(userview);
-        //ÉèÖÃÈ¡Ïû°´Å¥ÏìÓ¦ÊÂ¼ş
-        dialog.setNegativeButton("È¡Ïû",new DialogInterface.OnClickListener(){
+        //è®¾ç½®å–æ¶ˆæŒ‰é’®å“åº”äº‹ä»¶
+        dialog.setNegativeButton("å–æ¶ˆ",new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface arg0,int arg1){
                 arg0.dismiss();
             }
         });
-        //ÉèÖÃÖØÖÃ°´Å¥ÏìÓ¦Ê±¼ä
-        dialog.setNegativeButton("ÖØÖÃ",new DialogInterface.OnClickListener(){
+        //è®¾ç½®é‡ç½®æŒ‰é’®å“åº”æ—¶é—´
+        dialog.setNegativeButton("é‡ç½®",new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface arg0,int arg1){
                 sleepmode = MainMusic.NOTSLEEP;
                 sleeptime = 20;
@@ -603,20 +612,20 @@ public class MainMusic extends Activity {
                 iv_sleep.setVisibility(View.INVISIBLE);
             }
         });
-        //ÉèÖÃÈ·¶¨°´Å¥ÏìÓ¦ÊÂ¼ş
-        dialog.setPositiveButton("È·¶¨",new DialogInterface.OnClickListener(){
+        //è®¾ç½®ç¡®å®šæŒ‰é’®å“åº”äº‹ä»¶
+        dialog.setPositiveButton("ç¡®å®š",new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface arg0,int arg1){
                 if(sleepmode == MainMusic.ISSLEEP)
                 {
                     timer_sleep = new Timer();
                     int time = sleep_seekbar.getProgress();
-                    //Æô¶¯ÈÎÎñ
+                    //å¯åŠ¨ä»»åŠ¡
                     timer_sleep.schedule(timerTask,time*60*1000);
                     iv_sleep.setVisibility(View.VISIBLE);
                 }
                 else
                 {
-                    //È¡ÏûÈÎÎñ
+                    //å–æ¶ˆä»»åŠ¡
                     timerTask.cancel();
                     timer_sleep.cancel();
                     arg0.dismiss();
@@ -627,62 +636,62 @@ public class MainMusic extends Activity {
         dialog.show();
 
     }
-    
+
     private void setTheme(String theme) {
-		if ("Ò¹¿Õ".equals(theme)) {
-			root_Layout.setBackgroundResource(R.drawable.bg_night);
-		}  else if ("À¶É«".equals(theme)) {
-			root_Layout.setBackgroundResource(R.drawable.bg_blue);
-		} else if ("ÏßÌõ".equals(theme)) {
-			root_Layout.setBackgroundResource(R.drawable.bg_line);
-		} else if ("Ìì¿Õ".equals(theme)) {
-			root_Layout.setBackgroundResource(R.drawable.bg_sky);
-		}
-	}
-    // ´´½¨²Ëµ¥
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+        if ("å¤œç©º".equals(theme)) {
+            root_Layout.setBackgroundResource(R.drawable.bg_night);
+        }  else if ("è“è‰²".equals(theme)) {
+            root_Layout.setBackgroundResource(R.drawable.bg_blue);
+        } else if ("çº¿æ¡".equals(theme)) {
+            root_Layout.setBackgroundResource(R.drawable.bg_line);
+        } else if ("å¤©ç©º".equals(theme)) {
+            root_Layout.setBackgroundResource(R.drawable.bg_sky);
+        }
+    }
+    // åˆ›å»ºèœå•
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_music, menu);
         return super.onCreateOptionsMenu(menu);
-	}
+    }
 
-	// ´¦Àí²Ëµ¥µã»÷ÊÂ¼ş 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.menu_theme:
-			// ÏÔÊ¾ÁĞ±í¶Ô»°¿ò
-			new AlertDialog.Builder(this).setTitle("ÇëÑ¡ÔñÖ÷Ìâ").setItems(R.array.theme,
-					new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int which) {
-									// »ñÈ¡ÔÚarray.xmlÖĞ¶¨ÒåµÄÖ÷ÌâÃû³Æ
-									String theme = PropertyBean.THEMES[which];
-									// ÉèÖÃActivityµÄÖ÷Ìâ
-									setTheme(theme);
-									// ±£´æÑ¡ÔñµÄÖ÷Ìâ
-									PropertyBean property = new PropertyBean(
-											MainMusic.this);
-									property.setAndSaveTheme(theme);
-								}
-							}).show();
-			break;
-		case R.id.menu_about:
-			// ÏÔÊ¾ÎÄ±¾¶Ô»°¿ò
-			new AlertDialog.Builder(MainMusic.this).setTitle("Music")
-					.setMessage(MainMusic.this.getString(R.string.about)).show();
-			break;
+    // å¤„ç†èœå•ç‚¹å‡»äº‹ä»¶
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_theme:
+                // æ˜¾ç¤ºåˆ—è¡¨å¯¹è¯æ¡†
+                new AlertDialog.Builder(this).setTitle("è¯·é€‰æ‹©ä¸»é¢˜").setItems(R.array.theme,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                // è·å–åœ¨array.xmlä¸­å®šä¹‰çš„ä¸»é¢˜åç§°
+                                String theme = PropertyBean.THEMES[which];
+                                // è®¾ç½®Activityçš„ä¸»é¢˜
+                                setTheme(theme);
+                                // ä¿å­˜é€‰æ‹©çš„ä¸»é¢˜
+                                PropertyBean property = new PropertyBean(
+                                        MainMusic.this);
+                                property.setAndSaveTheme(theme);
+                            }
+                        }).show();
+                break;
+            case R.id.menu_about:
+                // æ˜¾ç¤ºæ–‡æœ¬å¯¹è¯æ¡†
+                new AlertDialog.Builder(MainMusic.this).setTitle("Music")
+                        .setMessage(MainMusic.this.getString(R.string.about)).show();
+                break;
             case R.id.menu_quit:
-                //ÍË³ö³ÌĞò
-                new AlertDialog.Builder(MainMusic.this).setTitle("ÌáÊ¾")
-                        .setMessage(R.string.quit_message).setPositiveButton("È·¶¨", new DialogInterface.OnClickListener() {
+                //é€€å‡ºç¨‹åº
+                new AlertDialog.Builder(MainMusic.this).setTitle("æç¤º")
+                        .setMessage(R.string.quit_message).setPositiveButton("ç¡®å®š", new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
                         // TODO Auto-generated method stub
                         System.exit(0);
                     }
-                }).setNegativeButton("È¡Ïû", new DialogInterface.OnClickListener() {
+                }).setNegativeButton("å–æ¶ˆ", new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
@@ -692,11 +701,11 @@ public class MainMusic extends Activity {
                 }).show();
                 break;
             case R.id.menu_playmode:
-                String[] mode = new String[] { "Ë³Ğò²¥·Å", "µ¥ÇúÑ­»·", "ÁĞ±íÑ­»·" };
+                String[] mode = new String[] { "é¡ºåºæ’­æ”¾", "å•æ›²å¾ªç¯", "åˆ—è¡¨å¾ªç¯" };
                 AlertDialog.Builder builder = new AlertDialog.Builder(
                         MainMusic.this);
-                builder.setTitle("²¥·ÅÄ£Ê½");
-                builder.setSingleChoiceItems(mode, playmode,						//ÉèÖÃµ¥Ñ¡Ïî£¬ÕâÀïµÚ¶ş¸ö²ÎÊıÊÇÄ¬ÈÏÑ¡ÔñµÄĞòºÅ£¬ÕâÀï¸ù¾İplaymodeµÄÖµÀ´È·¶¨
+                builder.setTitle("æ’­æ”¾æ¨¡å¼");
+                builder.setSingleChoiceItems(mode, playmode,						//è®¾ç½®å•é€‰é¡¹ï¼Œè¿™é‡Œç¬¬äºŒä¸ªå‚æ•°æ˜¯é»˜è®¤é€‰æ‹©çš„åºå·ï¼Œè¿™é‡Œæ ¹æ®playmodeçš„å€¼æ¥ç¡®å®š
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
@@ -704,7 +713,7 @@ public class MainMusic extends Activity {
                                 playmode = arg1;
                             }
                         });
-                builder.setPositiveButton("È·¶¨",
+                builder.setPositiveButton("ç¡®å®š",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
@@ -732,9 +741,13 @@ public class MainMusic extends Activity {
             case R.id.menu_sleep:
                 showSleepDialog();
                 break;
+            case R.id.menu_lrc:
+                Intent intent = new Intent(MainMusic.this,LrcActivity.class);
+                startActivity(intent);
+                break;
         }
-		return super.onOptionsItemSelected(item);
-	}
+        return super.onOptionsItemSelected(item);
+    }
 }
 
 

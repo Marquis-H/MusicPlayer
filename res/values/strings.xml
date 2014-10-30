@@ -18,5 +18,6 @@
     <string name="quit">退出</string>
     <string name="quit_message">确定退出？</string>
     <string name="sleep">睡眠设置</string>
+    <string name="lrc">歌词下载</string>
 
 </resources>
