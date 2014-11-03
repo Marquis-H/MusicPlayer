@@ -68,8 +68,11 @@ public class MainMusic extends Activity {
     private StatusChangedReceiver receiver;
     //歌曲列表对象
     private ArrayList<Music> musicArrayList;
-    //退出判断标记
-    private static Boolean isExit = false;
+    //退出、返回判断标记
+    private static int isExit = 0;
+    private static int isreturn = 0;
+    private static int bj = 0;
+    private static int bj2 = 0;
     //音量控制
     private TextView vol;
     private SeekBar seekBar_vol;
@@ -154,6 +157,18 @@ public class MainMusic extends Activity {
         //下一首
         Btn_Next.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
+                if(playmode == MainMusic.MODE_LIST_CYCLE)
+                {
+                    if(number ==musicArrayList.size()-1)
+                    {
+                        number = 0;
+                        sendBroadcastOnCommand(MusicService.COMMAND_PLAY);
+                    }
+                    else
+                    {
+                        sendBroadcastOnCommand(MusicService.COMMAND_NEXT);
+                    }
+                }else
                 sendBroadcastOnCommand(MusicService.COMMAND_NEXT);
             }
         });
@@ -466,26 +481,42 @@ public class MainMusic extends Activity {
 
     private void exitByDoubleClick()
     {
-        Timer timer = null;
-        if(isExit == false)
+        Timer exittimer = null;
+        Timer returntimer = null;
+        if(bj == 0&&(isExit == 0&&isreturn == 0))
         {
-            isExit = true;
-            Toast.makeText(this, "再按一次退出！", Toast.LENGTH_SHORT).show();
-            timer = new Timer();
-            timer.schedule(new TimerTask() {
+            isreturn =1;
+            Toast.makeText(this, "再按一次返回,再按二次退出！", Toast.LENGTH_SHORT).show();
+            exittimer = new Timer();
+            exittimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    isExit = false;
+                    isExit = 0;
+                    isreturn =0;
+                }
+            }, 2500);
+        }
+        else if(isreturn == 1 &&isExit ==0&&bj == 0)
+        {
+            isExit = 1;
+            bj = 1;
+            returntimer = new Timer();
+            returntimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    isExit = 0;
+                    isreturn =0;
+                    bj = 0;
                     finish();
                 }
-            }, 2000);
+            }, 2500);
         }
         else
         {
-           // System.exit(0);
             Intent intent = new Intent(MainMusic.this,MusicService.class);
             stopService(intent);
             finish();
+            bj = 0;
         }
 
 
